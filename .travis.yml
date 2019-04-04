@@ -1,0 +1,29 @@
+sudo: required
+services:
+  - docker 
+  
+before_install:
+  # Initil image 
+  - docker build -t mhd/react-test -f ./client/Dockerfile.dev ./client
+
+# travis CI will be watching the output of this commands 
+# if it returns  an output =! 0,  travis CI will assume that 
+# our code is broken 
+script:
+  - docker run mhd/react-test npm run test -- --coverage
+
+after_success: 
+
+#Production versions 
+   - docker build -t mglilah/multi-client ./client
+   - docker build -t mglilah/multi-nginx ./nginx
+   - docker build -t mglilah/multi-server ./server
+   - docker build -t mglilah/multi-worker ./worker
+   # First we need to log in  docker CLI
+   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+   # Take those images and push them to docker hub 
+   - docker push mglilah/multi-client
+   - docker push mglilah/multi-nginx
+   - docker push mglilah/multi-server
+   - docker push mglilah/multi-worker
