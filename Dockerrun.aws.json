@@ -1,0 +1,31 @@
+ {
+ "AWSEBDockerrunVersion":2,
+ "containerDefinitions": [
+    { "name": "client",
+      "image": "mglilah/multi-client" ,
+      "hostname": "client",
+      "essential": false  
+    }, 
+    { "name": "server",
+      "image": "mglilah/multi-server" ,
+      "hostname": "api",
+      "essential": false  
+    },
+    { "name": "worker",
+      "image": "mglilah/multi-worker" ,
+      "hostname": "worker",
+      "essential": false  
+    },
+    { "name": "nginx",
+      "image": "mglilah/multi-nginx" ,
+      "essential": true,
+      "portsMapings" : [ 
+        {
+         "hostPort": 80,
+         "containerPort": 80
+        }      
+      ],
+      "links": ["client","server"]
+    } 
+  ] 
+}
